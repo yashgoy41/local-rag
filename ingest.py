@@ -12,7 +12,7 @@ class Doc(LanceModel):
     text: str
     source: str
     page: int
-    vector: Vector(1536)
+    vector: Vector(2560)
 
 def extract_text_from_pdf(file_path):
     text_chunks = []
@@ -131,7 +131,7 @@ def main():
                     continue
                     
                 # Dummy vector for now as requested
-                dummy_vector = [0.0] * 1536 
+                dummy_vector = [0.0] * 2560 
                 
                 doc = Doc(
                     id=str(uuid.uuid4()),

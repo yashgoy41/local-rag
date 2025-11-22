@@ -44,6 +44,19 @@ Reads PDF/TXT files, uses `llama3.1:8b` to intelligently chunk them at semantic 
 4. Splits on `¶` to create semantic chunks
 5. Stores chunks in LanceDB with metadata (source, page, etc.)
 
+## Viewing Your Data
+
+Use the Lance Data Viewer to browse your database:
+
+```bash
+docker pull ghcr.io/gordonmurray/lance-data-viewer:lancedb-0.24.3
+docker run --rm -p 8080:8080 \
+  -v $(pwd)/data/lancedb:/data:ro \
+  ghcr.io/gordonmurray/lance-data-viewer:lancedb-0.24.3
+```
+
+Then open http://localhost:8080 to see your tables, schemas, and vector visualizations.
+
 ## Requirements
 
 - Python 3.10+
