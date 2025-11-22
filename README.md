@@ -1,52 +1,54 @@
-# Local RAG Pipeline - Ingestion Module
+# Local RAG Pipeline
 
-A semantic document chunking and ingestion system using local LLMs (Ollama) and LanceDB.
+Semantic document chunking and vector embedding system using local LLMs and LanceDB.
 
-## What It Does
+## Features
 
-Reads PDF/TXT files, uses `llama3.1:8b` to intelligently chunk them at semantic boundaries, and stores them in a LanceDB vector database.
+- **Semantic Chunking**: Uses `llama3.1:8b` to intelligently split documents at topic boundaries
+- **Vector Embeddings**: Uses `qwen3-embedding:4b` (2560 dimensions) for semantic search
+- **PDF Support**: Extracts and normalizes text from PDFs and TXT files
+- **Local & Private**: All processing happens locally with Ollama
 
-## Setup
+## Quick Start
 
-1. **Install Ollama** and pull the model:
-   ```bash
-   ollama pull llama3.1:8b
-   ```
+### 1. Prerequisites
 
-2. **Create virtual environment and install dependencies**:
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   pip install -r requirements.txt
-   ```
+```bash
+# Install Ollama and pull models
+ollama pull llama3.1:8b
+ollama pull qwen3-embedding:4b
 
-3. **Add documents**:
-   ```bash
-   mkdir -p documents
-   # Place your PDF/TXT files in documents/
-   ```
+# Setup Python environment
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-4. **Run ingestion**:
-   ```bash
-   python ingest.py
-   ```
+### 2. Ingest Documents
+
+```bash
+# Add your PDF/TXT files to documents/
+mkdir -p documents
+# Place files in documents/
+
+# Run ingestion
+python ingest.py
+```
+
+### 3. Generate Embeddings
+
+```bash
+python embed.py
+```
 
 ## Output
 
-- **Database**: `data/lancedb/` - LanceDB vector store
+- **Database**: `data/lancedb/` - Vector database with chunks and embeddings
 - **Debug**: `data/chunks_debug.jsonl` - Inspect generated chunks
-
-## How It Works
-
-1. Extracts text from PDFs (with whitespace normalization) and TXT files
-2. Sends text to `llama3.1:8b` with a semantic parsing prompt
-3. LLM inserts `¶` tokens at topic boundaries
-4. Splits on `¶` to create semantic chunks
-5. Stores chunks in LanceDB with metadata (source, page, etc.)
 
 ## Viewing Your Data
 
-Use the Lance Data Viewer to browse your database:
+Use Lance Data Viewer to browse your database:
 
 ```bash
 docker pull ghcr.io/gordonmurray/lance-data-viewer:lancedb-0.24.3
@@ -55,10 +57,18 @@ docker run --rm -p 8080:8080 \
   ghcr.io/gordonmurray/lance-data-viewer:lancedb-0.24.3
 ```
 
-Then open http://localhost:8080 to see your tables, schemas, and vector visualizations.
+Open http://localhost:8080 to explore tables, schemas, and vector visualizations.
+
+## How It Works
+
+1. **Extract**: Reads PDF/TXT files with whitespace normalization
+2. **Chunk**: LLM inserts `¶` tokens at semantic boundaries
+3. **Split**: Creates chunks by splitting on `¶`
+4. **Embed**: Generates 2560-dim vectors for each chunk
+5. **Store**: Saves to LanceDB with metadata (source, page)
 
 ## Requirements
 
 - Python 3.10+
 - Ollama running locally
-- Mac M1 (Apple Silicon) or compatible
+- Docker (optional, for data viewer)
