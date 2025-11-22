@@ -1,0 +1,5 @@
+ollama
+lancedb
+pypdf
+tqdm
+pydantic
