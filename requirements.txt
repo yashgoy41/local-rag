@@ -3,3 +3,6 @@ lancedb
 pypdf
 tqdm
 pydantic
+pandas
+sentence-transformers
+torch
