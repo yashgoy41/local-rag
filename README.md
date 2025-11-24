@@ -4,6 +4,8 @@ It's hard to know which local LLMs will run well on your Mac. Specs and benchmar
 
 This tool lets you spin up a RAG pipeline and immediately see the numbers that matter: **tokens/second** and **total latency** for each stage. Upload a document, ask questions, swap models, and compare.
 
+![RAG Dashboard](.github/assets/local-rag.png)
+
 ## Quick Start
 
 **Prerequisites:** Ollama running with at least one embedding model and one chat model.
@@ -29,6 +31,8 @@ Open http://localhost:5173, upload a PDF, and start benchmarking.
 - **Retrieval time** — Vector search + reranking latency  
 - **Generation speed** — Live tok/s as the model streams its response
 - **Total pipeline time** — End-to-end latency
+
+![Performance Metrics](.github/assets/benchmarks.png)
 
 ## Hardware Context
 
