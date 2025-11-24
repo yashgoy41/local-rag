@@ -4,9 +4,9 @@ Semantic document chunking, vector embedding, and retrieval system using local L
 
 ## Features
 
-- **Semantic Chunking**: Uses `llama3.1:8b` to intelligently split documents at topic boundaries
+- **Semantic Chunking**: Uses `qwen3:4b-instruct-2507-q4_K_M` to intelligently split documents at topic boundaries
 - **Vector Embeddings**: Uses `qwen3-embedding:4b` (2560 dimensions) for semantic search
-- **Reranking**: Uses `CrossEncoder("zeroentropy/zerank-2")` with MPS acceleration for accurate retrieval
+- **Reranking**: Uses `CrossEncoder("BAAI/bge-reranker-v2-m3")` for accurate retrieval
 - **PDF Support**: Extracts and normalizes text from PDFs and TXT files
 - **Local & Private**: All processing happens locally with Ollama
 
@@ -25,27 +25,23 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. Ingest Documents
+### 2. Run the Pipeline
 
 ```bash
 # Add your PDF/TXT files to documents/
 mkdir -p documents
 # Place files in documents/
 
-# Run ingestion
-python ingest.py
+# Run the complete pipeline (ingest → embed → retrieve)
+python main.py
 ```
 
-### 3. Generate Embeddings
+Or run each step individually:
 
 ```bash
-python embed.py
-```
-
-### 4. Test Retrieval
-
-```bash
-python retriever.py
+python ingest.py   # Step 1: Ingest documents
+python embed.py    # Step 2: Generate embeddings
+python retriever.py # Step 3: Test retrieval
 ```
 
 ## Usage
