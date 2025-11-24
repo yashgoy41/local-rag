@@ -1,92 +1,44 @@
-# Local RAG Pipeline
+# Local RAG Benchmarking
 
-Semantic document chunking, vector embedding, and retrieval system using local LLMs and LanceDB.
+It's hard to know which local LLMs will run well on your Mac. Specs and benchmarks online don't tell the whole story—what matters is how a model performs on *your* hardware, with *your* workload.
 
-## Features
-
-- **Semantic Chunking**: Uses `qwen3:4b-instruct-2507-q4_K_M` to intelligently split documents at topic boundaries
-- **Vector Embeddings**: Uses `qwen3-embedding:4b` (2560 dimensions) for semantic search
-- **Reranking**: Uses `CrossEncoder("BAAI/bge-reranker-v2-m3")` for accurate retrieval
-- **PDF Support**: Extracts and normalizes text from PDFs and TXT files
-- **Local & Private**: All processing happens locally with Ollama
+This tool lets you spin up a RAG pipeline and immediately see the numbers that matter: **tokens/second** and **total latency** for each stage. Upload a document, ask questions, swap models, and compare.
 
 ## Quick Start
 
-### 1. Prerequisites
+**Prerequisites:** Ollama running with at least one embedding model and one chat model.
 
 ```bash
-# Install Ollama and pull models
-ollama pull llama3.1:8b
+# Pull models (if you don't have them)
 ollama pull qwen3-embedding:4b
+ollama pull qwen3:4b
 
-# Setup Python environment
-python3 -m venv .venv
-source .venv/bin/activate
+# Start backend
 pip install -r requirements.txt
+python api.py
+
+# Start frontend (new terminal)
+cd frontend && npm install && npm run dev
 ```
 
-### 2. Run the Pipeline
+Open http://localhost:5173, upload a PDF, and start benchmarking.
 
-```bash
-# Add your PDF/TXT files to documents/
-mkdir -p documents
-# Place files in documents/
+## What You'll See
 
-# Run the complete pipeline (ingest → embed → retrieve)
-python main.py
-```
+- **Ingestion time** — How long to chunk and embed your document
+- **Retrieval time** — Vector search + reranking latency  
+- **Generation speed** — Live tok/s as the model streams its response
+- **Total pipeline time** — End-to-end latency
 
-Or run each step individually:
+## Hardware Context
 
-```bash
-python ingest.py   # Step 1: Ingest documents
-python embed.py    # Step 2: Generate embeddings
-python retriever.py # Step 3: Test retrieval
-```
+Developed and tested on an **M1 Pro MacBook (16GB RAM)**.
 
-## Usage
+Models used during development:
+- Embedding: `qwen3-embedding:4b`
+- Generation: `qwen3:4b`, `llama3.1:8b`
+- Reranker: `BAAI/bge-reranker-v2-m3`
 
-```python
-from retriever import RAGRetriever
+## Stack
 
-retriever = RAGRetriever()
-results = retriever.retrieve_context("your query here")
-
-for result in results:
-    print(f"Score: {result['score']}")
-    print(f"Text: {result['text']}")
-    print(f"Source: {result['source']} (Page {result['page']})")
-```
-
-## Output
-
-- **Database**: `data/lancedb/` - Vector database with chunks and embeddings
-- **Debug**: `data/chunks_debug.jsonl` - Inspect generated chunks
-
-## Viewing Your Data
-
-Use Lance Data Viewer to browse your database:
-
-```bash
-docker pull ghcr.io/gordonmurray/lance-data-viewer:lancedb-0.24.3
-docker run --rm -p 8080:8080 \
-  -v $(pwd)/data/lancedb:/data:ro \
-  ghcr.io/gordonmurray/lance-data-viewer:lancedb-0.24.3
-```
-
-Open http://localhost:8080 to explore tables, schemas, and vector visualizations.
-
-## How It Works
-
-1. **Extract**: Reads PDF/TXT files with whitespace normalization
-2. **Chunk**: LLM inserts `¶` tokens at semantic boundaries
-3. **Split**: Creates chunks by splitting on `¶`
-4. **Embed**: Generates 2560-dim vectors for each chunk
-5. **Retrieve**: Vector search (top 25) + reranking (top 5)
-6. **Store**: Saves to LanceDB with metadata (source, page)
-
-## Requirements
-
-- Python 3.10+
-- Ollama running locally
-- Docker (optional, for data viewer)
+FastAPI · LanceDB · Ollama · React + Vite

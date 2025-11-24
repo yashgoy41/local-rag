@@ -6,3 +6,7 @@ pydantic
 pandas
 sentence-transformers
 torch
+chainlit
+fastapi
+uvicorn
+python-multipart
